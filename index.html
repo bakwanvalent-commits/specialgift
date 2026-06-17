@@ -4,53 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Surprise Buat Kamu!</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #fdf5e6; overflow: hidden; }
-        #intro-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffb6c1; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999; }
-        #intro-screen h1 { color: #fff; margin-bottom: 20px; font-family: sans-serif; }
-        #start-btn { padding: 15px 40px; font-size: 18px; font-weight: bold; color: #ffb6c1; background-color: #fff; border: none; border-radius: 30px; cursor: pointer; }
-        .swiper { width: 100%; height: 100%; display: none; }
-        .swiper-slide { display: flex; justify-content: center; align-items: center; }
-        .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .swiper-pagination-bullet-active { background-color: #ff69b4 !important; }
+        /* Desain Dasar */
+        body, html {
+            margin: 0; padding: 0; width: 100%;
+            background-color: black; color: white;
+            font-family: sans-serif; overflow-x: hidden;
+        }
+
+        /* Layar 1: Tombol Buka Kado */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: black; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 30;
+        }
+
+        /* Layar 2: Cover */
+        #cover-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: black; display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 20;
+        }
+        #cover-screen img {
+            max-width: 90%; max-height: 70vh; object-fit: contain; margin-bottom: 20px;
+        }
+
+        /* Desain Tombol */
+        button {
+            padding: 15px 40px; font-size: 18px; font-weight: bold;
+            color: black; background-color: #fff; border: none;
+            border-radius: 30px; cursor: pointer; transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
+
+        /* Layar 3: Komik Scroll (Webtoon style) */
+        #comic-screen {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; padding-bottom: 50px; background-color: black;
+        }
+        #comic-screen img {
+            width: 100%; max-width: 600px; /* Dibatasi biar ga raksasa kalau dibuka di laptop */
+            display: block; margin: 0; padding: 0;
+        }
     </style>
 </head>
 <body>
+
     <div id="intro-screen">
-        <h1>Ada kado spesial nih...</h1>
+        <h1 style="margin-bottom: 20px;">Ada kado spesial nih...</h1>
         <button id="start-btn">Buka Kado 🎁</button>
     </div>
 
-    <audio id="bgm" loop>
-        <source src="song" type="audio/mp3">
-    </audio>
-
-    <div class="swiper mySwiper" id="comic-area">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide"><img src="cover.png" alt="Cover"></div>
-            <div class="swiper-slide"><img src="page1.png" alt="Halaman 1"></div>
-            <div class="swiper-slide"><img src="page2.png" alt="Halaman 2"></div>
-            <div class="swiper-slide"><img src="page3.png" alt="Halaman 3"></div>
-            <div class="swiper-slide"><img src="page4.png" alt="Halaman 4"></div>
-            <div class="swiper-slide"><img src="page5.png" alt="Halaman 5"></div>
-            <div class="swiper-slide"><img src="page6.png" alt="Halaman 6"></div>
-            <div class="swiper-slide"><img src="page7.png" alt="Halaman 7"></div>
-            <div class="swiper-slide"><img src="page8.png" alt="Halaman 8"></div>
-            <div class="swiper-slide"><img src="page9.png" alt="Halaman 9"></div>
-            <div class="swiper-slide"><img src="page10.png" alt="Halaman 10"></div>
-        </div>
-        <div class="swiper-pagination"></div>
+    <div id="cover-screen">
+        <img src="cover.png" alt="Cover">
+        <button id="next-btn">Mulai Baca 📖</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <audio id="bgm" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="comic-screen">
+        <img src="page1.png" alt="Halaman 1">
+        <img src="page2.png" alt="Halaman 2">
+        <img src="page3.png" alt="Halaman 3">
+        <img src="page4.png" alt="Halaman 4">
+        <img src="page5.png" alt="Halaman 5">
+        <img src="page6.png" alt="Halaman 6">
+        <img src="page7.png" alt="Halaman 7">
+        <img src="page8.png" alt="Halaman 8">
+        <img src="page9.png" alt="Halaman 9">
+        <img src="page10.png" alt="Halaman 10">
+    </div>
+
     <script>
+        // Tombol 1: Buka Kado diklik
         document.getElementById('start-btn').addEventListener('click', function() {
-            document.getElementById('bgm').play();
-            document.getElementById('intro-screen').style.display = 'none';
-            document.getElementById('comic-area').style.display = 'block';
-            new Swiper(".mySwiper", { pagination: { el: ".swiper-pagination", clickable: true } });
+            document.getElementById('bgm').play(); // Putar lagu
+            document.getElementById('intro-screen').style.display = 'none'; // Hilangin layar 1
+            document.getElementById('cover-screen').style.display = 'flex'; // Munculin layar 2 (Cover)
+        });
+
+        // Tombol 2: Mulai Baca diklik
+        document.getElementById('next-btn').addEventListener('click', function() {
+            document.getElementById('cover-screen').style.display = 'none'; // Hilangin layar 2
+            document.getElementById('comic-screen').style.display = 'flex'; // Munculin komik scroll
         });
     </script>
+
 </body>
 </html>
