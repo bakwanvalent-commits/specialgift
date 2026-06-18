@@ -12,39 +12,107 @@
             font-family: sans-serif; overflow-x: hidden;
         }
 
-        /* Layar 1: Tombol Buka Kado */
+        /* Layar 1: Intro */
         #intro-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: black; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 30;
+            justify-content: center; align-items: center; z-index: 50;
         }
 
         /* Layar 2: Cover */
         #cover-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: black; display: none; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 20;
+            justify-content: center; align-items: center; z-index: 40;
         }
         #cover-screen img {
             max-width: 90%; max-height: 70vh; object-fit: contain; margin-bottom: 20px;
         }
 
-        /* Desain Tombol */
+        /* Desain Tombol General */
         button {
             padding: 15px 40px; font-size: 18px; font-weight: bold;
             color: black; background-color: #fff; border: none;
             border-radius: 30px; cursor: pointer; transition: transform 0.2s;
+            margin: 10px;
         }
         button:active { transform: scale(0.95); }
 
-        /* Layar 3: Komik Scroll (Webtoon style) */
+        /* Layar 3: Komik Scroll */
         #comic-screen {
             display: none; flex-direction: column; align-items: center;
-            width: 100%; padding-bottom: 50px; background-color: black;
+            width: 100%; padding-bottom: 50px; background-color: black; z-index: 30;
         }
         #comic-screen img {
-            width: 100%; max-width: 600px; /* Dibatasi biar ga raksasa kalau dibuka di laptop */
-            display: block; margin: 0; padding: 0;
+            width: 100%; max-width: 600px; display: block; margin: 0; padding: 0;
+        }
+        
+        /* Navigasi Bawah Komik */
+        .bottom-nav {
+            margin-top: 40px; display: flex; gap: 15px; justify-content: center;
+        }
+        #home-btn {
+            background-color: #333; color: white; padding: 15px 30px; font-size: 16px;
+        }
+        #open-rating-btn {
+            background-color: #ff69b4; color: white; padding: 15px 40px; font-size: 16px;
+        }
+
+        /* POP-UP RATING (Pilih Bintang) */
+        #rating-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none; justify-content: center; align-items: center; z-index: 100;
+        }
+        .popup-content {
+            background-color: #1a1a1a; padding: 30px 20px; border-radius: 20px;
+            text-align: center; width: 85%; max-width: 350px;
+            border: 2px solid #ff69b4; animation: popIn 0.3s ease-out;
+        }
+        .stars {
+            display: flex; justify-content: center; gap: 15px; margin-top: 20px;
+        }
+        .star-icon {
+            font-size: 45px; cursor: pointer; transition: transform 0.2s;
+        }
+        .star-icon:hover, .star-icon:active {
+            transform: scale(1.2);
+        }
+
+        /* POP-UP REWARD STIKER (Kejutan) */
+        #sticker-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 110;
+        }
+        #popup-sticker-img {
+            width: 200px; height: 200px; object-fit: contain; margin-bottom: 25px;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Layar 4: End Page (Download Stiker & Tombol WA) */
+        #end-screen {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; width: 100%; min-height: 100vh;
+            background-color: black; padding: 20px; box-sizing: border-box; text-align: center; z-index: 20;
+        }
+        .download-box, .wa-box {
+            background-color: #111; padding: 25px; border-radius: 15px;
+            width: 100%; max-width: 310px; margin-bottom: 25px; border: 1px solid #333;
+        }
+        #end-sticker-img {
+            width: 120px; height: 120px; object-fit: contain; margin: 15px 0;
+        }
+
+        /* Animasi */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -75,20 +143,121 @@
         <img src="page8.png" alt="Halaman 8">
         <img src="page9.png" alt="Halaman 9">
         <img src="page10.png" alt="Halaman 10">
+        
+        <div class="bottom-nav">
+            <button id="home-btn">Home 🏠</button>
+            <button id="open-rating-btn">Next ✨</button>
+        </div>
+    </div>
+
+    <div id="rating-popup">
+        <div class="popup-content">
+            <h3 style="margin-top: 0; color: #ff69b4; font-size: 22px;">Rate Komik Ini!</h3>
+            <p style="font-size: 14px; color: #ccc;">Pilih bintang untuk membuka kejutan selanjutnya!</p>
+            <div class="stars">
+                <span class="star-icon" data-sticker="1">⭐</span>
+                <span class="star-icon" data-sticker="2">⭐</span>
+                <span class="star-icon" data-sticker="3">⭐</span>
+                <span class="star-icon" data-sticker="4">⭐</span>
+            </div>
+            <button id="close-rating-btn" style="margin-top: 25px; padding: 10px 20px; font-size: 14px; background-color: #333; color: white;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="sticker-popup">
+        <h2 style="color: #ff69b4; margin-top: 0;">You Got a Sticker! 🎉</h2>
+        <img id="popup-sticker-img" src="" alt="Secret Sticker">
+        <button id="go-to-download-btn" style="background-color: #ff69b4; color: white;">Lanjut ➡️</button>
+    </div>
+
+    <div id="end-screen">
+        <h2 style="color: #ff69b4; margin-top: 0;">Bonus Unlocked! 🎁</h2>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 30px;">Ini hadiah spesial dari rating kamu tadi.</p>
+
+        <div class="download-box">
+            <h3 style="margin: 0; color: #fff;">Badge Sticker</h3>
+            <img id="end-sticker-img" src="" alt="Badge Sticker">
+            <br>
+            <a id="end-sticker-download" href="" download><button style="background-color: #ff69b4; color: white; font-size: 14px; padding: 10px 20px;">Download Badge 📥</button></a>
+        </div>
+
+        <div class="wa-box">
+            <h3 style="margin: 0; color: #fff;">Versi Buku Digital (EPUB)</h3>
+            <p style="font-size: 13px; color: #aaa; margin: 10px 0 20px;">kamu mau komiknya? sembah aku wahhahaha! 🗿</p>
+            
+            <a href="https://wa.me/6285607243803?text=minta%20ebooknya%20dong%20king" target="_blank" style="text-decoration: none;">
+                <button style="background-color: #25D366; color: white; font-size: 15px; padding: 12px 25px; width: 100%;">minta ebooknya dong king 📱</button>
+            </a>
+        </div>
+
+        <button id="back-to-home-btn" style="background-color: #333; color: white; margin-top: 10px; font-size: 14px;">Mulai Dari Awal 🔄</button>
     </div>
 
     <script>
-        // Tombol 1: Buka Kado diklik
+        // 1. Intro -> Cover
         document.getElementById('start-btn').addEventListener('click', function() {
-            document.getElementById('bgm').play(); // Putar lagu
-            document.getElementById('intro-screen').style.display = 'none'; // Hilangin layar 1
-            document.getElementById('cover-screen').style.display = 'flex'; // Munculin layar 2 (Cover)
+            document.getElementById('bgm').play();
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('cover-screen').style.display = 'flex';
         });
 
-        // Tombol 2: Mulai Baca diklik
+        // 2. Cover -> Komik
         document.getElementById('next-btn').addEventListener('click', function() {
-            document.getElementById('cover-screen').style.display = 'none'; // Hilangin layar 2
-            document.getElementById('comic-screen').style.display = 'flex'; // Munculin komik scroll
+            document.getElementById('cover-screen').style.display = 'none';
+            document.getElementById('comic-screen').style.display = 'flex';
+            window.scrollTo(0, 0);
+        });
+
+        // 3. Tombol Home di bawah komik (Kembali ke Cover)
+        document.getElementById('home-btn').addEventListener('click', function() {
+            document.getElementById('comic-screen').style.display = 'none';
+            document.getElementById('cover-screen').style.display = 'flex';
+            window.scrollTo(0, 0);
+        });
+
+        // 4. Tombol Next buka Pop-up Rating
+        document.getElementById('open-rating-btn').addEventListener('click', function() {
+            document.getElementById('rating-popup').style.display = 'flex';
+        });
+
+        // 5. Tutup Pop-up Rating
+        document.getElementById('close-rating-btn').addEventListener('click', function() {
+            document.getElementById('rating-popup').style.display = 'none';
+        });
+
+        // 6. Logika Pilih Bintang
+        const stars = document.querySelectorAll('.star-icon');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const stickerNum = this.getAttribute('data-sticker');
+                const stickerFile = 'stiker' + stickerNum + '.png';
+                
+                // Set gambar stiker untuk Pop-up Kejutan
+                document.getElementById('popup-sticker-img').src = stickerFile;
+                
+                // Set gambar dan link download untuk halaman End Screen
+                document.getElementById('end-sticker-img').src = stickerFile;
+                document.getElementById('end-sticker-download').href = stickerFile;
+
+                // Tutup pop-up rating, buka pop-up stiker
+                document.getElementById('rating-popup').style.display = 'none';
+                document.getElementById('sticker-popup').style.display = 'flex';
+            });
+        });
+
+        // 7. Tombol Lanjut dari Pop-up Stiker menuju Halaman Download
+        document.getElementById('go-to-download-btn').addEventListener('click', function() {
+            document.getElementById('sticker-popup').style.display = 'none'; // Tutup pop-up
+            document.getElementById('comic-screen').style.display = 'none';  // Sembunyikan komik
+            document.getElementById('end-screen').style.display = 'flex';    // Buka halaman download
+            window.scrollTo(0, 0);
+        });
+
+        // 8. Tombol Mulai Dari Awal (End Screen -> Cover)
+        document.getElementById('back-to-home-btn').addEventListener('click', function() {
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('cover-screen').style.display = 'flex';
+            window.scrollTo(0, 0);
         });
     </script>
 
